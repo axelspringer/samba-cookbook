@@ -25,7 +25,7 @@ action :create do
   unless @smbuser.exists
     pw = new_resource.password
     execute "Create #{new_resource.name}" do
-      command "echo '#{pw}\n#{pw}' | smbpasswd -s -a #{new_resource.name}"
+      command "echo '#{pw}\n#{pw}' | pdbedit -a -t -u #{new_resource.name}"
     end
     new_resource.updated_by_last_action(true)
   end
@@ -34,7 +34,7 @@ end
 action :enable do
   if @smbuser.disabled
     execute "Enable #{new_resource.name}" do
-      command "smbpasswd -e #{new_resource.name}"
+      command "pdbedit -c '[]' -u #{new_resource.name}"
     end
     new_resource.updated_by_last_action(true)
   end
@@ -43,7 +43,7 @@ end
 action :delete do
   if @smbuser.exists
     execute "Delete #{new_resource.name}" do
-      command "smbpasswd -x #{new_resource.name}"
+      command "pdbedit -x #{new_resource.name}"
     end
     new_resource.updated_by_last_action(true)
   end
